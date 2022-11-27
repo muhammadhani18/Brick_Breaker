@@ -30,16 +30,36 @@ Brick ENDS
 .data
     ball_1 BALL <3,150,185,2,2>
     paddle_1 Paddle <3,50,130,190,6>      
-    brick_1 Brick <5,50,10,25,3,2>
-    brick_2 Brick <31,50,10,25,3,3>
-    brick_3 Brick <57,50,10,25,3,4>
-    brick_4 Brick <83,50,10,25,3,5>
-    brick_5 Brick <109,50,10,25,3,6>
-    brick_6 Brick <135,50,10,25,3,7>
-    brick_7 Brick <161,50,10,25,3,8>
+    
+    brick_1 Brick <5,40,10,25,3,2>
+    brick_2 Brick <31,40,10,25,3,7>
+    brick_3 Brick <57,40,10,25,3,4>
+    brick_4 Brick <83,40,10,25,3,5>
+    brick_5 Brick <109,40,10,25,3,6>
+    brick_6 Brick <135,40,10,25,3,7>
+    brick_7 Brick <161,40,10,25,3,8>
+    brick_8 Brick <187,40,10,25,3,9>
+    brick_9 Brick <213,40,10,25,3,10>
+    brick_10 Brick <238,40,10,25,3,11>
+    brick_11 Brick <263,40,10,25,3,12>
+    brick_12 Brick <288,40,10,25,3,13>
+  
+    brick_13 Brick <5,25,10,25,3,13>
+    brick_14 Brick <31,25,10,25,3,12>
+    brick_15 Brick <57,25,10,25,3,11>
+    brick_16 Brick <83,25,10,25,3,10>
+    brick_17 Brick <109,25,10,25,3,9>
+    brick_18 Brick <135,25,10,25,3,8>
+    brick_19 Brick <161,25,10,25,3,7>
+    brick_20 Brick <187,25,10,25,3,6>
+    brick_21 Brick <213,25,10,25,3,5>
+    brick_22 Brick <238,25,10,25,3,4>
+    brick_23 Brick <263,25,10,25,3,2>
+    brick_24 Brick <288,25,10,25,3,1>
+  
     
     flag dw 0
-    score db "SCORE: ","$"
+    score db " SCORE: ","$"
     score_count db 0
     Lives db "Lives: ", "$"
     live_count db 0 
@@ -85,26 +105,47 @@ Brick ENDS
     MakeBrick MACRO brick_obj
         mov cx,brick_obj.brick_x
         mov dx,brick_obj.brick_y
-
-        l2:
-            ;draw pixel
+        
+        mov bx, cx
+        add bx, 25
+        .WHILE cx < bx 
             mov ah,0ch
             mov al,brick_obj.brick_col
-            int 10h 
-
-            ;loop
+            int 10h
             inc cx 
-            mov ax, cx
-            sub ax,brick_obj.brick_x
-            cmp ax,brick_obj.brick_w 
-            jng l2
+        .ENDW
 
-            inc dx 
-            mov cx, brick_obj.brick_x
-            mov ax, dx
-            sub ax,brick_obj.brick_y
-            cmp ax,brick_obj.brick_h 
-            jng l2
+        mov bx, dx
+        add bx, 13
+        .WHILE dx < bx
+            mov ah,0ch
+            mov al,brick_obj.brick_col
+            int 10h
+            inc dx
+        .ENDW
+
+        mov cx,brick_obj.brick_x
+        mov dx,brick_obj.brick_y
+        
+        mov bx, dx
+        add bx, 12
+        .WHILE dx < bx 
+            mov ah,0ch
+            mov al,brick_obj.brick_col
+            int 10h
+            inc dx
+        .ENDW
+        
+        mov cx,brick_obj.brick_x
+        mov bx, cx
+        add bx, 25
+        .WHILE cx < bx
+            mov ah,0ch
+            mov al,brick_obj.brick_col
+            int 10h
+            inc cx 
+        .ENDW
+
     ENDM
 
     DrawPaddle MACRO paddle_obj
@@ -201,7 +242,7 @@ Brick ENDS
                         mov ax, ball_obj.ball_y
                         add ax,  ball_obj.ball_size
                         mov bx, paddle_obj.paddle_y
-                        sub bx,5
+                        sub bx,paddle_obj.paddle_h
                         .IF ax > bx 
                             mov ax,paddle_obj.paddle_y
                             add ax, paddle_obj.paddle_h
@@ -217,8 +258,8 @@ Brick ENDS
                 mov ax, ball_obj.ball_y
                 add ax, ball_obj.ball_y
                 mov ax,ball_obj.ball_y
-                .IF ax >195
-                    inc live_count
+                .IF ax > 195
+                    dec live_count
                     inc score
                 .ENDIF
             e:
@@ -240,8 +281,8 @@ Brick ENDS
         
         cmp ah, 4Dh
         je right
-
         
+         
         jmp exit
        
         left:
@@ -253,6 +294,36 @@ Brick ENDS
             add paddle_obj.paddle_x,ax 
         exit:    
             ;DrawPaddle paddle_obj
+               
+    ENDM
+
+    DisplayBrick MACRO 
+        MakeBrick brick_1
+        MakeBrick brick_2
+        MakeBrick brick_3
+        MakeBrick brick_4
+        MakeBrick brick_5
+        MakeBrick brick_6
+        MakeBrick brick_7
+        MakeBrick brick_8
+        MakeBrick brick_9
+        MakeBrick brick_10
+        MakeBrick brick_11
+        MakeBrick brick_12
+       
+        MakeBrick brick_13
+        MakeBrick brick_14
+        MakeBrick brick_15
+        MakeBrick brick_16
+        MakeBrick brick_17
+        MakeBrick brick_18
+        MakeBrick brick_19
+        MakeBrick brick_20
+        MakeBrick brick_21
+        MakeBrick brick_22
+        MakeBrick brick_23
+        MakeBrick brick_24
+        
     ENDM
 
     DetectBrick MACRO ball_obj,brick_obj
@@ -278,6 +349,34 @@ Brick ENDS
 
     ENDM
 
+    DetectBrickCollision MACRO
+        DetectBrick ball_1,brick_1
+        DetectBrick ball_1,brick_2
+        DetectBrick ball_1,brick_3 
+        DetectBrick ball_1,brick_4 
+        DetectBrick ball_1,brick_5
+        DetectBrick ball_1,brick_6 
+        DetectBrick ball_1,brick_7 
+        DetectBrick ball_1,brick_8
+        DetectBrick ball_1,brick_9
+        DetectBrick ball_1,brick_10
+        DetectBrick ball_1,brick_11
+        DetectBrick ball_1,brick_12
+        DetectBrick ball_1,brick_13
+        DetectBrick ball_1,brick_14 
+        DetectBrick ball_1,brick_15 
+        DetectBrick ball_1,brick_16 
+        DetectBrick ball_1,brick_17 
+        DetectBrick ball_1,brick_18 
+        DetectBrick ball_1,brick_19 
+        DetectBrick ball_1,brick_20  
+        DetectBrick ball_1,brick_21  
+        DetectBrick ball_1,brick_22  
+        DetectBrick ball_1,brick_23  
+        DetectBrick ball_1,brick_24 
+
+    ENDM
+
     StatusBar MACRO 
         mov cx, 2
         mov dx, 20
@@ -294,13 +393,13 @@ Brick ENDS
         mov dl, 1     ;column
         
         mov si, offset score
-        .WHILE dl < 6
+        .WHILE dl < 8
             mov ah, 2
             int 10h
 
             mov al,[si]    ;ASCII code of Character 
             mov bx,0
-            mov bl,0010b   ;Green color
+            mov bl,0111b   ;Green color
             mov cx,1       ;repetition count
             mov ah,09h
             int 10h
@@ -309,22 +408,32 @@ Brick ENDS
 
         .ENDW
 
+        mov dl,10
+        mov dh,1
+        mov ah, 2
+        int 10h
+
+        mov al,score_count   ;ASCII code of Character 
+        add al,48
+        mov bx,0
+        mov bl,0111b   ;Green color
+        mov cx,1
         
-
-
+        
+        
         ;print lives
         mov si, offset Lives
         
         mov dh, 1     ;row
-        mov dl, 25     ;column
+        mov dl, 30     ;column
         
-        .WHILE dl < 30
+        .WHILE dl < 36
             mov ah, 2
             int 10h
 
             mov al,[si]    ;ASCII code of Character 
             mov bx,0
-            mov bl,0010b   ;Green color
+            mov bl,0111b   ;Green color
             mov cx,1       ;repetition count
             mov ah,09h
             int 10h
@@ -354,16 +463,11 @@ start:
             DrawPaddle paddle_1
             MoveBall ball_1,paddle_1
             DrawBall ball_1  
-            ;MakeBrick brick_1
-            MakeBrick brick_2
-            ; MakeBrick brick_3
-            ; MakeBrick brick_4
-            ; MakeBrick brick_5
-            ; MakeBrick brick_6
-            ; MakeBrick brick_7
-            
-            DetectBrick ball_1,brick_2
+            DisplayBrick
+        
             StatusBar    
+            
+            
             
             mov ah,01h
             int 16h
