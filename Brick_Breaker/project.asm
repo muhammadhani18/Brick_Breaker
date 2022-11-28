@@ -341,10 +341,6 @@ Brick ENDS
 
                 .ENDIF
 
-                
-                
-
-
                 ;paddle bounce
                 mov ax, ball_obj.ball_x
                 add ax, ball_obj.ball_size
@@ -472,38 +468,38 @@ Brick ENDS
     DetectBrick MACRO ball_obj, brick_obj
 		
         .IF brick_obj.brick_x != 0 
-        mov ax, ball_obj.ball_x
-        add ax, ball_obj.ball_size
-        add ax, 4
-        .IF ax > brick_obj.brick_x
-            mov ax, brick_obj.brick_x
-            add ax, brick_obj.brick_w 
-            .IF ball_obj.ball_x < ax 
-                mov ax, ball_obj.ball_y
-                add ax,  ball_obj.ball_size
-                add ax,5
-                mov bx, brick_obj.brick_y
-                .IF ax > bx 
-                    mov ax,brick_obj.brick_y
-                    add ax, brick_obj.brick_h
+            mov ax, ball_obj.ball_x
+            add ax, ball_obj.ball_size
+            add ax, 4
+            .IF ax > brick_obj.brick_x
+                mov ax, brick_obj.brick_x
+                add ax, brick_obj.brick_w 
+                .IF ball_obj.ball_x < ax 
+                    mov ax, ball_obj.ball_y
+                    add ax,  ball_obj.ball_size
                     add ax,5
-                    .IF ball_obj.ball_y < ax 
-                        mov ax, ball_obj.ball_vel_y
-                        neg ax
-                        mov ball_obj.ball_vel_y, ax
-                        inc score_count  
-                        ;cmp score_count, 3
-                        ;je stopGame     
-                        dec brick_obj.brick_life
+                    mov bx, brick_obj.brick_y
+                    .IF ax > bx 
+                        mov ax,brick_obj.brick_y
+                        add ax, brick_obj.brick_h
+                        add ax,5
+                        .IF ball_obj.ball_y < ax 
+                            mov ax, ball_obj.ball_vel_y
+                            neg ax
+                            mov ball_obj.ball_vel_y, ax
+                            inc score_count  
+                            ;cmp score_count, 3
+                            ;je stopGame     
+                            dec brick_obj.brick_life
+                        .ENDIF
+                        .IF brick_obj.brick_life == 0
+                            MakeBrickBlack brick_obj 
+                            mov brick_obj.brick_x, 0
+                            mov brick_obj.brick_y, 0
+                        .ENDIF
                     .ENDIF
-                    .IF brick_obj.brick_life == 0
-                        MakeBrickBlack brick_obj 
-                        mov brick_obj.brick_x, 0
-                        mov brick_obj.brick_y, 0
-                    .ENDIF
-                .ENDIF
-            .ENDIF 
-        .ENDIF
+                .ENDIF 
+            .ENDIF
         .ENDIF
     ENDM
 
