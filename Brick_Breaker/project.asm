@@ -49,7 +49,6 @@ Brick ENDS
     brick_10 Brick <238,40,10,25,3,11>
     brick_11 Brick <263,40,10,25,3,12>
     brick_12 Brick <288,40,10,25,3,13>
-  
     brick_13 Brick <5,25,10,25,3,13>
     brick_14 Brick <31,25,10,25,3,12>
     brick_15 Brick <57,25,10,25,3,11>
@@ -63,7 +62,7 @@ Brick ENDS
     brick_23 Brick <263,25,10,25,3,2>
     brick_24 Brick <288,25,10,25,3,1>
   
-
+    ;level2
     brick_25 Brick <145,120,10,25,3,2>
     brick_26 Brick <132,105,10,25,3,7>
     brick_27 Brick <158,105,10,25,3,4>
@@ -666,6 +665,25 @@ Brick ENDS
                 mov ball_1.ball_vel_y,ax 
                 mov ax,40
                 mov paddle_1.paddle_w,ax
+                mov ax,8
+                mov paddle_1.paddle_vel,ax
+                
+                mov ax, ball_1.ball_vel_y
+                    neg ax
+                    mov ball_1.ball_vel_y, ax
+                    
+                    
+                    mov ax, ball_x_copy
+       
+                    mov ball_1.ball_x, ax      
+                    
+                    mov ax, ball_y_copy
+                    mov ball_1.ball_y, ax      
+                    
+                    mov ax, paddle_x_copy
+                    mov paddle_1.paddle_x, ax
+                    mov ax,0
+                    mov flag,ax 
             .ENDIF
             mov ah,1
             mov clear_flag,ah
@@ -702,6 +720,22 @@ Brick ENDS
             .IF ah ==0
                 MakeScreen
 
+                mov ax, ball_1.ball_vel_y
+                    neg ax
+                    mov ball_1.ball_vel_y, ax
+                    
+                    
+                    mov ax, ball_x_copy
+       
+                    mov ball_1.ball_x, ax      
+                    
+                    mov ax, ball_y_copy
+                    mov ball_1.ball_y, ax      
+                    
+                    mov ax, paddle_x_copy
+                    mov paddle_1.paddle_x, ax
+                    mov ax,0
+                    mov flag,ax
             .ENDIF
             mov ah,1
             mov clear_flag_3,ah
