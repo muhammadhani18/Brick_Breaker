@@ -63,12 +63,67 @@ Brick ENDS
     brick_23 Brick <263,25,10,25,3,2>
     brick_24 Brick <288,25,10,25,3,1>
   
-    
+
+    brick_25 Brick <145,120,10,25,3,2>
+    brick_26 Brick <132,105,10,25,3,7>
+    brick_27 Brick <158,105,10,25,3,4>
+    brick_28 Brick <119,90,10,25,3,5>
+    brick_29 Brick <145,90,10,25,3,6>
+    brick_30 Brick <171,90,10,25,3,7>
+    brick_31 Brick <106,75,10,25,3,8>
+    brick_32 Brick <132,75,10,25,3,9>
+    brick_33 Brick <158,75,10,25,3,10>
+    brick_34 Brick <184,75,10,25,3,11>
+    brick_35 Brick <93,60,10,25,3,12>
+    brick_36 Brick <119,60,10,25,3,13>
+    brick_37 Brick <145,60,10,25,3,13>
+    brick_38 Brick <171,60,10,25,3,12>
+    brick_39 Brick <197,60,10,25,3,11>
+    brick_40 Brick <80,45,10,25,3,10>
+    brick_41 Brick <106,45,10,25,3,9>
+    brick_42 Brick <132,45,10,25,3,8>
+    brick_43 Brick <158,45,10,25,3,7>
+    brick_44 Brick <186,45,10,25,3,6>    
+    brick_45 Brick <212,45,10,25,3,5>
+    brick_46 Brick <238,45,10,25,3,4>
+    brick_47 Brick <54,45,10,25,3,2>
+    brick_48 Brick <264,45,10,25,3,1>
+
+    brick_49 Brick <54,30,10,25,3,2>
+    brick_50 Brick <54,45,10,25,3,7>
+    brick_51 Brick <54,60,10,25,3,4>
+    brick_52 Brick <54,75,10,25,3,5>
+    brick_53 Brick <54,90,10,25,3,6>
+    brick_54 Brick <54,105,10,25,3,7>
+    brick_55 Brick <80,30,10,25,3,8>
+    brick_56 Brick <80,45,10,25,3,9>
+    brick_57 Brick <80,60,10,25,3,10>
+    brick_58 Brick <80,75,10,25,3,11>
+    brick_59 Brick <80,90,10,25,3,12>
+    brick_60 Brick <80,105,10,25,3,13> 
+    brick_61 Brick <186,30,10,25,3,13>
+    brick_62 Brick <186,45,10,25,3,12>
+    brick_63 Brick <186,60,10,25,3,11>
+    brick_64 Brick <186,75,10,25,3,10>
+    brick_65 Brick <186,90,10,25,3,9>
+    brick_66 Brick <186,105,10,25,3,8>
+    brick_67 Brick <212,30,10,25,3,7>
+    brick_68 Brick <212,45,10,25,3,6>
+    brick_69 Brick <212,60,10,25,3,5>
+    brick_70 Brick <212,75,10,25,3,4>
+    brick_71 Brick <212,90,10,25,3,2>
+    brick_72 Brick <212,105,10,25,3,1>
+   
     flag dw 0
     score db " SCORE: ","$"
     score_count dw 0
     Lives db "Lives: ", "$"
     live_count db 3 
+    level_1 db 1
+    level_2 db 0
+    level_3 db 0
+    clear_flag db 0
+    clear_flag_3 db 0
 .code
 
     MakeScreen MACRO ;for refreshong screen to blank
@@ -324,14 +379,6 @@ Brick ENDS
                 mov ax,ball_obj.ball_y
                 
 
-                ; mov ax, ball_obj.ball_vel_y
-                ; add  ball_obj.ball_y, ax
-                ; mov ax,ball_obj.ball_y
-                ; .IF ax > 195
-                ;     RestFlag ball_obj, paddle_obj
-                ;     mov ax,0
-                ;     mov flag,ax
-                ; .ENDIF 
                 ;collisions on y-axis
                 .IF ax < 25 || ax > 195
        
@@ -340,6 +387,10 @@ Brick ENDS
                     mov ball_obj.ball_vel_y, ax
 
                 .ENDIF
+
+                
+                
+
 
                 ;paddle bounce
                 mov ax, ball_obj.ball_x
@@ -436,98 +487,250 @@ Brick ENDS
     ENDM
 
     DisplayBrick MACRO 
+        mov ah, level_1
+        .IF ah == 1
+            MakeBrick brick_1
+            MakeBrick brick_2
+            MakeBrick brick_3
+            MakeBrick brick_4
+            MakeBrick brick_5
+            MakeBrick brick_6
+            MakeBrick brick_7
+            MakeBrick brick_8
+            MakeBrick brick_9
+            MakeBrick brick_10
+            MakeBrick brick_11
+            MakeBrick brick_12        
+            MakeBrick brick_13
+            MakeBrick brick_14
+            MakeBrick brick_15
+            MakeBrick brick_16
+            MakeBrick brick_17
+            MakeBrick brick_18
+            MakeBrick brick_19
+            MakeBrick brick_20
+            MakeBrick brick_21
+            MakeBrick brick_22
+            MakeBrick brick_23
+            MakeBrick brick_24
+        .ENDIF     
         
-        MakeBrick brick_1
-        MakeBrick brick_2
-        MakeBrick brick_3
-        MakeBrick brick_4
-        MakeBrick brick_5
-        MakeBrick brick_6
-        MakeBrick brick_7
-        MakeBrick brick_8
-        MakeBrick brick_9
-        MakeBrick brick_10
-        MakeBrick brick_11
-        MakeBrick brick_12
-       
-        MakeBrick brick_13
-        MakeBrick brick_14
-        MakeBrick brick_15
-        MakeBrick brick_16
-        MakeBrick brick_17
-        MakeBrick brick_18
-        MakeBrick brick_19
-        MakeBrick brick_20
-        MakeBrick brick_21
-        MakeBrick brick_22
-        MakeBrick brick_23
-        MakeBrick brick_24
-        
+        mov ah,level_2
+        .IF ah  == 1
+            MakeBrick brick_25
+            MakeBrick brick_26
+            MakeBrick brick_27
+            MakeBrick brick_28
+            MakeBrick brick_29
+            MakeBrick brick_30
+            MakeBrick brick_31
+            MakeBrick brick_32
+            MakeBrick brick_33
+            MakeBrick brick_34
+            MakeBrick brick_35
+            MakeBrick brick_36
+            MakeBrick brick_37
+            MakeBrick brick_38
+            MakeBrick brick_39
+            MakeBrick brick_40
+            MakeBrick brick_41
+            MakeBrick brick_42
+            MakeBrick brick_43
+            MakeBrick brick_44
+            MakeBrick brick_45
+            MakeBrick brick_46
+            MakeBrick brick_47
+            MakeBrick brick_48
+            
+        .ENDIF
+
+        mov ah,level_3
+        .IF ah==1
+            MakeBrick brick_49
+            MakeBrick brick_50
+            MakeBrick brick_51
+            MakeBrick brick_52
+            MakeBrick brick_53
+            MakeBrick brick_54
+            MakeBrick brick_55
+            MakeBrick brick_56
+            MakeBrick brick_57
+            MakeBrick brick_58
+            MakeBrick brick_59
+            MakeBrick brick_60
+            MakeBrick brick_61
+            MakeBrick brick_62
+            MakeBrick brick_63
+            MakeBrick brick_64
+            MakeBrick brick_65
+            MakeBrick brick_66
+            MakeBrick brick_67
+            MakeBrick brick_68
+            MakeBrick brick_69
+            MakeBrick brick_70
+            MakeBrick brick_71
+            MakeBrick brick_72
+        .ENDIF
     ENDM
 
     DetectBrick MACRO ball_obj, brick_obj
 		
         .IF brick_obj.brick_x != 0 
-            mov ax, ball_obj.ball_x
-            add ax, ball_obj.ball_size
-            add ax, 4
-            .IF ax > brick_obj.brick_x
-                mov ax, brick_obj.brick_x
-                add ax, brick_obj.brick_w 
-                .IF ball_obj.ball_x < ax 
-                    mov ax, ball_obj.ball_y
-                    add ax,  ball_obj.ball_size
+        mov ax, ball_obj.ball_x
+        add ax, ball_obj.ball_size
+        add ax, 4
+        .IF ax > brick_obj.brick_x
+            mov ax, brick_obj.brick_x
+            add ax, brick_obj.brick_w 
+            .IF ball_obj.ball_x < ax 
+                mov ax, ball_obj.ball_y
+                add ax,  ball_obj.ball_size
+                add ax,5
+                mov bx, brick_obj.brick_y
+                .IF ax > bx 
+                    mov ax,brick_obj.brick_y
+                    add ax, brick_obj.brick_h
                     add ax,5
-                    mov bx, brick_obj.brick_y
-                    .IF ax > bx 
-                        mov ax,brick_obj.brick_y
-                        add ax, brick_obj.brick_h
-                        add ax,5
-                        .IF ball_obj.ball_y < ax 
-                            mov ax, ball_obj.ball_vel_y
-                            neg ax
-                            mov ball_obj.ball_vel_y, ax
-                            inc score_count  
-                            ;cmp score_count, 3
-                            ;je stopGame     
-                            dec brick_obj.brick_life
-                        .ENDIF
-                        .IF brick_obj.brick_life == 0
-                            MakeBrickBlack brick_obj 
-                            mov brick_obj.brick_x, 0
-                            mov brick_obj.brick_y, 0
-                        .ENDIF
+                    .IF ball_obj.ball_y < ax 
+                        mov ax, ball_obj.ball_vel_y
+                        neg ax
+                        mov ball_obj.ball_vel_y, ax
+                        inc score_count  
+                        dec brick_obj.brick_life
                     .ENDIF
-                .ENDIF 
-            .ENDIF
+                    .IF brick_obj.brick_life == 0
+                        MakeBrickBlack brick_obj 
+                        mov brick_obj.brick_x, 0
+                        mov brick_obj.brick_y, 0
+                    .ENDIF
+                .ENDIF
+            .ENDIF 
+        .ENDIF
+        .ENDIF
+        mov ax,score_count
+        .IF score_count >= 5
+            mov ah,1
+            mov level_2,ah
+            mov ah,0
+            mov level_1,ah 
+        .ENDIF
+        
+        mov ax,score_count
+        .IF score_count >=10 
+            mov ah,1
+            mov level_3,ah
+            mov ah,0
+            mov level_2,ah 
         .ENDIF
     ENDM
 
+
+
     DetectBrickCollision MACRO
-        DetectBrick ball_1,brick_1
-        DetectBrick ball_1,brick_2
-        DetectBrick ball_1,brick_3 
-        DetectBrick ball_1,brick_4 
-        DetectBrick ball_1,brick_5
-        DetectBrick ball_1,brick_6 
-        DetectBrick ball_1,brick_7 
-        DetectBrick ball_1,brick_8
-        DetectBrick ball_1,brick_9
-        DetectBrick ball_1,brick_10
-        DetectBrick ball_1,brick_11
-        DetectBrick ball_1,brick_12
-        DetectBrick ball_1,brick_13
-        DetectBrick ball_1,brick_14 
-        DetectBrick ball_1,brick_15 
-        DetectBrick ball_1,brick_16 
-        DetectBrick ball_1,brick_17 
-        DetectBrick ball_1,brick_18 
-        DetectBrick ball_1,brick_19 
-        DetectBrick ball_1,brick_20  
-        DetectBrick ball_1,brick_21  
-        DetectBrick ball_1,brick_22  
-        DetectBrick ball_1,brick_23  
-        DetectBrick ball_1,brick_24 
+        mov ah,level_1
+        .IF ah == 1
+            DetectBrick ball_1,brick_1
+            DetectBrick ball_1,brick_2
+            DetectBrick ball_1,brick_3 
+            DetectBrick ball_1,brick_4 
+            DetectBrick ball_1,brick_5
+            DetectBrick ball_1,brick_6 
+            DetectBrick ball_1,brick_7 
+            DetectBrick ball_1,brick_8
+            DetectBrick ball_1,brick_9
+            DetectBrick ball_1,brick_10
+            DetectBrick ball_1,brick_11
+            DetectBrick ball_1,brick_12
+            DetectBrick ball_1,brick_13
+            DetectBrick ball_1,brick_14 
+            DetectBrick ball_1,brick_15 
+            DetectBrick ball_1,brick_16 
+            DetectBrick ball_1,brick_17 
+            DetectBrick ball_1,brick_18 
+            DetectBrick ball_1,brick_19 
+            DetectBrick ball_1,brick_20  
+            DetectBrick ball_1,brick_21  
+            DetectBrick ball_1,brick_22  
+            DetectBrick ball_1,brick_23  
+            DetectBrick ball_1,brick_24 
+        .ENDIF
+        
+        ;level 2
+        mov ah,level_2
+        .IF ah==1
+            mov ah,clear_flag
+            .IF ah ==0
+                MakeScreen
+                mov ax,3
+                mov ball_1.ball_vel_x,ax 
+                mov ball_1.ball_vel_y,ax 
+                mov ax,40
+                mov paddle_1.paddle_w,ax
+            .ENDIF
+            mov ah,1
+            mov clear_flag,ah
+
+            DetectBrick ball_1,brick_25
+            DetectBrick ball_1,brick_26
+            DetectBrick ball_1,brick_27
+            DetectBrick ball_1,brick_28
+            DetectBrick ball_1,brick_29
+            DetectBrick ball_1,brick_30
+            DetectBrick ball_1,brick_31
+            DetectBrick ball_1,brick_32
+            DetectBrick ball_1,brick_33
+            DetectBrick ball_1,brick_34
+            DetectBrick ball_1,brick_35
+            DetectBrick ball_1,brick_36
+            DetectBrick ball_1,brick_37
+            DetectBrick ball_1,brick_38
+            DetectBrick ball_1,brick_39
+            DetectBrick ball_1,brick_40
+            DetectBrick ball_1,brick_41
+            DetectBrick ball_1,brick_42
+            DetectBrick ball_1,brick_43
+            DetectBrick ball_1,brick_44
+            DetectBrick ball_1,brick_45
+            DetectBrick ball_1,brick_46
+            DetectBrick ball_1,brick_47
+            DetectBrick ball_1,brick_48
+        .ENDIF
+
+        mov ah,level_3
+        .IF ah==1
+            mov ah,clear_flag_3
+            .IF ah ==0
+                MakeScreen
+
+            .ENDIF
+            mov ah,1
+            mov clear_flag_3,ah
+
+                DetectBrick ball_1,brick_49
+                DetectBrick ball_1,brick_50
+                DetectBrick ball_1,brick_51
+                DetectBrick ball_1,brick_52
+                DetectBrick ball_1,brick_53
+                DetectBrick ball_1,brick_54
+                DetectBrick ball_1,brick_55
+                DetectBrick ball_1,brick_56
+                DetectBrick ball_1,brick_57
+                DetectBrick ball_1,brick_58
+                DetectBrick ball_1,brick_59
+                DetectBrick ball_1,brick_60
+                DetectBrick ball_1,brick_61
+                DetectBrick ball_1,brick_62
+                DetectBrick ball_1,brick_63
+                DetectBrick ball_1,brick_64
+                DetectBrick ball_1,brick_65
+                DetectBrick ball_1,brick_66
+                DetectBrick ball_1,brick_67
+                DetectBrick ball_1,brick_68
+                DetectBrick ball_1,brick_69
+                DetectBrick ball_1,brick_70
+                DetectBrick ball_1,brick_71
+                DetectBrick ball_1,brick_72
+        .ENDIF    
     ENDM    
 
     StatusBar MACRO 
@@ -546,19 +749,29 @@ Brick ENDS
         mov dl, 1     ;column
         
         mov si, offset score
-        .WHILE dl < 8
+        .WHILE dl <= 11
             mov ah, 2
             int 10h
-
-            mov al,[si]    ;ASCII code of Character 
-            mov bx,0
-            mov bl,0111b   ;Green color
-            mov cx,1       ;repetition count
-            mov ah,09h
-            int 10h
-            inc si 
-            inc dl
-
+            .IF dl < 9 
+                mov al,[si]    ;ASCII code of Character 
+                mov bx,0
+                mov bl,0111b   ;Green color
+                mov cx,1       ;repetition count
+                mov ah,09h
+                int 10h
+                inc si 
+                inc dl
+            .ENDIF 
+            .IF dl >= 9
+                
+                mov al,3    ;ASCII code of Character 
+                mov bx,0
+                mov bl,0100b   ;Green color
+                mov cx,1       ;repetition count
+                mov ah,09h
+                int 10h
+                inc dl  
+            .ENDIF
         .ENDW
 
 
@@ -569,7 +782,7 @@ Brick ENDS
         mov dh, 1     ;row
         mov dl, 30     ;column
         
-        .WHILE dl < 36
+        .WHILE dl < 37
             mov ah, 2
             int 10h
 
@@ -581,7 +794,35 @@ Brick ENDS
             int 10h
             inc si 
             inc dl
-
+            .IF dl > 36
+                mov ah,live_count
+                ; .IF ah == 3
+                ;     mov al,'x'   ;ASCII code of Character 
+                ;     mov bx,0
+                ;     mov bl,1110b   ;Green color
+                ;     mov cx,1       ;repetition count
+                ;     mov ah,09h
+                ;     int 10h
+                ;     inc dl 
+                ; .ENDIF
+                .IF ah == 2
+                    mov al,'x'    ;ASCII code of Character 
+                    mov bx,0
+                    mov bl,1110b   ;Green color
+                    mov cx,1       ;repetition count
+                    mov ah,09h
+                    int 10h
+                    inc dl 
+                .ENDIF
+                .IF ah == 1
+                    mov al,'x'    ;ASCII code of Character 
+                    mov bx,0
+                    mov bl,1110b   ;Green color
+                    mov cx,1       ;repetition count
+                    mov ah,09h
+                    int 10h
+                .ENDIF
+            .ENDIF
         .ENDW
         
     ENDM
