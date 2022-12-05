@@ -123,7 +123,952 @@ Brick ENDS
     level_3 db 0
     clear_flag db 0
     clear_flag_3 db 0
+    Welcome_Str db "Press Space To Start $"  ;20
+    EnterName_Str db "Enter your name: $"    ;16
+    YourName_Str db "Your Name: $"           ;10 
+    Title_Str db "BRICK BREAKER $"           ;13
+    NewGame_Str db "New Game $"              ;8
+    Instructions_Str db "Instructions $"     ;12
+    HighScore_Str db "High Score $"          ;10
+    Exit_Str db "Exit $"                     ;4
+    Instructions_Str_Heading db "Instructions: $"     ;13
+    Instructions_Str_1 db "Use the left and right arrow $" ;28 
+    Instructions_Str_2 db "keys to control the paddle $";26
+    Instructions_Str_Exit db "Press Backspace to go back. $" ;27
+    YouWin_Str db "You Win! $" ;8
+    YouWin2_Str db "Press Space To Continue $" ;25
+    Name_Str db 100 dup(?)
+    Name_Str_Size db 0
+    Original_Name_Str_Size db 0
+    Menu_Cursor db 1
+    Ball_Radius db 5
+    Ball_New_Radius db 5
+    counter db 0
 .code
+jmp entry
+
+Enter_Str_Output MACRO 
+    mov si, offset EnterName_Str
+        
+    mov dh, 12     ;row
+    mov dl, 10     ;column
+    .WHILE dl < 26    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+endm
+
+
+InputName MACRO
+    mov si, offset Name_Str
+    mov dh,13 ; row
+    mov dl,10 ; coulmn
+    INPUTLOOP:
+        INPUTLOOP1:
+            mov ah, 2
+            int 10h
+            mov ah,0h
+            int 16h
+        putou1:
+            cmp al,32
+            jne PRESSED_CHARACTER
+            jmp InputName_Exit
+            jmp loop1
+
+    PRESSED_CHARACTER:
+        mov [si],al
+        mov bx,0
+        mov bl,71h   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        inc Name_Str_Size
+    jmp INPUTLOOP1
+    InputName_Exit:
+    mov al,Name_Str_Size
+    mov Original_Name_Str_Size,al
+endm
+
+Welcome_Str_Output MACRO 
+    mov si, offset Welcome_Str
+        
+    mov dh, 13     ;row
+    mov dl, 10     ;column
+    .WHILE dl < 30    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+endm
+MakeScreen MACRO ;for refreshing screen to blank
+    mov ah, 00h
+    mov al,13h
+    int 10h
+
+    mov ah,00h
+    mov bh,00h
+    mov bl,00h
+    int 10h
+ENDM
+
+
+OutputName MACRO 
+    mov si, offset Name_Str
+        
+    mov dh, 12     ;row
+    mov dl, 10     ;column
+    add Name_Str_Size,10
+    .WHILE dl < Name_Str_Size   ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+endm
+
+Menu MACRO                                          ;MENU AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    ;    MAKING BOX AROUND TITLE AAAAAAAAAAAAA
+    rectangle:
+        mov bx,118
+        MOV CX, 80   ;(column)
+        MOV DX, 27    ;(row)
+        row1:
+        cmp bx,0
+        je coulmn1
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp row1
+
+    coulmn1:
+        mov bx,18
+        loop01:
+        cmp bx,0
+        je row2
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc dx
+        dec bx
+        jmp loop01
+
+    row2:
+        mov bx,118
+        loop02:
+        cmp bx,0
+        je coulmn2
+        mov AL, 1110b
+        mov AH, 0CH
+        INT 10H
+        dec cx
+        dec bx
+        jmp loop02
+
+    coulmn2:
+        mov bx,18
+        loop03:
+        cmp bx,0
+        je func_exit
+        mov AL,1110b
+        mov AH, 0Ch
+        INT 10h
+        dec dx
+        dec bx
+        jmp loop03
+
+    func_exit:
+
+
+    mov si, offset YourName_Str
+        
+    mov dh, 0     ;row
+    mov dl, 29     ;column
+    .WHILE dl < 39    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+
+
+    mov si, offset Name_Str
+    
+    mov dh, 1     ;row
+    mov dl, 39     ;column
+    sub dl,Original_Name_Str_Size
+    add Name_Str_Size,dl
+    .WHILE dl < Name_Str_Size   ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,71h   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+    mov al,Original_Name_Str_Size
+    mov Name_Str_Size,al
+
+    mov si, offset Title_Str
+        
+    mov dh, 4     ;row
+    mov dl, 11     ;column
+    .WHILE dl < 24    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+
+        mov si, offset NewGame_Str
+        
+    mov dh, 9     ;row
+    mov dl, 14     ;column
+    .WHILE dl < 23    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+
+        mov si, offset Instructions_Str
+        
+    mov dh, 11     ;row
+    mov dl, 12     ;column
+    .WHILE dl < 24    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW 
+
+            mov si, offset HighScore_Str
+        
+    mov dh, 13     ;row
+    mov dl, 13     ;column
+    .WHILE dl < 23    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW 
+
+
+            mov si, offset Exit_Str
+        
+    mov dh, 15     ;row
+    mov dl, 15     ;column
+    .WHILE dl < 19    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+    .ENDW 
+
+    
+
+    mov al,Menu_Cursor
+    cmp al,1
+    jne SECOND_RECTANGLE
+
+    ;NORMAL BALL FOR MENU AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    MOV CX, 93   ;(column)
+    MOV DX, 70   ;(row)
+
+    mov bl,Ball_Radius
+    TOP_BASE:
+        line1:
+        cmp bx,0
+        je NEXTLINE
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line1
+        NEXTLINE:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je TOP_BASE_EXIT
+        inc dx
+        sub cl,Ball_New_Radius
+        dec cx
+        add Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line1
+        TOP_BASE_EXIT:
+        mov bl,Ball_New_Radius
+        sub cl,Ball_New_Radius
+        inc dx
+        .WHILE bx > 0
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        .ENDW
+
+        BOTTOM_BASE:
+        inc dx
+        sub cl,Ball_New_Radius
+        mov bx,5
+        mov Ball_Radius, bl
+        mov bl,Ball_New_Radius
+        line2:
+        cmp bx,0
+        je NEXTLINE_1
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line2
+        NEXTLINE_1:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je BOTTOM_BASE_EXIT
+        inc dx
+        sub cl,Ball_New_Radius
+        inc cx
+        sub Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line2
+    BOTTOM_BASE_EXIT:
+        mov bl,5
+        mov Ball_Radius, bl
+        mov Ball_New_Radius, bl
+                            ; FIRST RECTANGLE AAAAAAAAAAAAAAAAAAAA
+    rectangle1:
+        mov bx, 70
+        MOV CX, 107   ;(column)
+        MOV DX, 68    ;(row)
+        row11:
+        cmp bx,0
+        je coulmn11
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp row11
+
+        coulmn11:
+        mov bx,15
+        loop011:
+        cmp bx,0
+        je row21
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc dx
+        dec bx
+        jmp loop011
+
+        row21:
+        mov bx,70
+        loop021:
+        cmp bx,0
+        je coulmn21
+        mov AL, 1110b
+        mov AH, 0CH
+        INT 10H
+        dec cx
+        dec bx
+        jmp loop021
+
+        coulmn21:
+        mov bx,15
+        loop031:
+        cmp bx,0
+        je func_exit1
+        mov AL,1110b
+        mov AH, 0Ch
+        INT 10h
+        dec dx
+        dec bx
+        jmp loop031
+
+
+
+    SECOND_RECTANGLE:
+
+    mov al,Menu_Cursor
+    cmp al,2
+    jne THIRD_RECTANGLE
+    
+    ;NORMAL BALL FOR MENU AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    MOV CX, 80   ;(column)
+    MOV DX, 85   ;(row)
+    mov bl,Ball_Radius
+    TOP_BASE2:
+        line12:
+        cmp bx,0
+        je NEXTLINE2
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line12
+        NEXTLINE2:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je TOP_BASE_EXIT2
+        inc dx
+        sub cl,Ball_New_Radius
+        dec cx
+        add Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line12
+        TOP_BASE_EXIT2:
+        mov bl,Ball_New_Radius
+        sub cl,Ball_New_Radius
+        inc dx
+        .WHILE bx > 0
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        .ENDW
+
+        BOTTOM_BASE2:
+        inc dx
+        sub cl,Ball_New_Radius
+        mov bx,5
+        mov Ball_Radius, bl
+        mov bl,Ball_New_Radius
+        line22:
+        cmp bx,0
+        je NEXTLINE_12
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line22
+        NEXTLINE_12:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je BOTTOM_BASE_EXIT2
+        inc dx
+        sub cl,Ball_New_Radius
+        inc cx
+        sub Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line22
+    BOTTOM_BASE_EXIT2:
+        mov bl,5
+        mov Ball_Radius, bl
+        mov Ball_New_Radius, bl
+
+
+    rectangle2:
+        mov bx, 100
+        MOV CX, 92   ;(column)
+        MOV DX, 83    ;(row)
+        row12:
+        cmp bx,0
+        je coulmn12
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp row12
+
+        coulmn12:
+        mov bx,15
+        loop012:
+        cmp bx,0
+        je row22
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc dx
+        dec bx
+        jmp loop012
+
+        row22:
+        mov bx,100
+        loop022:
+        cmp bx,0
+        je coulmn22
+        mov AL, 1110b
+        mov AH, 0CH
+        INT 10H
+        dec cx
+        dec bx
+        jmp loop022
+
+        coulmn22:
+        mov bx,15
+        loop032:
+        cmp bx,0
+        je func_exit1
+        mov AL,1110b
+        mov AH, 0Ch
+        INT 10h
+        dec dx
+        dec bx
+        jmp loop032
+
+
+
+
+
+
+    
+    THIRD_RECTANGLE:
+
+    mov al,Menu_Cursor
+    cmp al,3
+    jne FOURTH_RECTANGLE
+
+    MOV CX, 85   ;(column)
+    MOV DX, 100   ;(row)
+    mov bl,Ball_Radius
+    TOP_BASE3:
+        line13:
+        cmp bx,0
+        je NEXTLINE3
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line13
+        NEXTLINE3:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je TOP_BASE_EXIT3
+        inc dx
+        sub cl,Ball_New_Radius
+        dec cx
+        add Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line13
+        TOP_BASE_EXIT3:
+        mov bl,Ball_New_Radius
+        sub cl,Ball_New_Radius
+        inc dx
+        .WHILE bx > 0
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        .ENDW
+
+        BOTTOM_BASE3:
+        inc dx
+        sub cl,Ball_New_Radius
+        mov bx,5
+        mov Ball_Radius, bl
+        mov bl,Ball_New_Radius
+        line23:
+        cmp bx,0
+        je NEXTLINE_13
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line23
+        NEXTLINE_13:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je BOTTOM_BASE_EXIT3
+        inc dx
+        sub cl,Ball_New_Radius
+        inc cx
+        sub Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line23
+    BOTTOM_BASE_EXIT3:
+        mov bl,5
+        mov Ball_Radius, bl
+        mov Ball_New_Radius, bl
+
+    
+    rectangle3:
+        mov bx, 84
+        MOV CX, 100   ;(column)
+        MOV DX, 98    ;(row)
+        row13:
+        cmp bx,0
+        je coulmn13
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp row13
+
+        coulmn13:
+        mov bx,15
+        loop013:
+        cmp bx,0
+        je row23
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc dx
+        dec bx
+        jmp loop013
+
+        row23:
+        mov bx,84
+        loop023:
+        cmp bx,0
+        je coulmn23
+        mov AL, 1110b
+        mov AH, 0CH
+        INT 10H
+        dec cx
+        dec bx
+        jmp loop023
+
+        coulmn23:
+        mov bx,15
+        loop033:
+        cmp bx,0
+        je func_exit1
+        mov AL,1110b
+        mov AH, 0Ch
+        INT 10h
+        dec dx
+        dec bx
+        jmp loop033
+        
+
+    FOURTH_RECTANGLE:
+
+    MOV CX, 102   ;(column)
+    MOV DX, 118   ;(row)
+    mov bl,Ball_Radius
+    TOP_BASE4:
+        line14:
+        cmp bx,0
+        je NEXTLINE4
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line14
+        NEXTLINE4:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je TOP_BASE_EXIT4
+        inc dx
+        sub cl,Ball_New_Radius
+        dec cx
+        add Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line14
+        TOP_BASE_EXIT4:
+        mov bl,Ball_New_Radius
+        sub cl,Ball_New_Radius
+        inc dx
+        .WHILE bx > 0
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        .ENDW
+
+        BOTTOM_BASE4:
+        inc dx
+        sub cl,Ball_New_Radius
+        mov bx,5
+        mov Ball_Radius, bl
+        mov bl,Ball_New_Radius
+        line24:
+        cmp bx,0
+        je NEXTLINE_14
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp line24
+        NEXTLINE_14:
+        dec Ball_Radius
+        mov bx,0
+        cmp Ball_Radius,bl
+        je BOTTOM_BASE_EXIT4
+        inc dx
+        sub cl,Ball_New_Radius
+        inc cx
+        sub Ball_New_Radius,2
+        mov bl,Ball_New_Radius
+        jmp line24
+    BOTTOM_BASE_EXIT4:
+        mov bl,5
+        mov Ball_Radius, bl
+        mov Ball_New_Radius, bl
+    rectangle4:
+        mov bx, 40
+        MOV CX, 115   ;(column)
+        MOV DX, 116    ;(row)
+        row14:
+        cmp bx,0
+        je coulmn14
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc cx
+        dec bx
+        jmp row14
+
+        coulmn14:
+        mov bx,15
+        loop014:
+        cmp bx,0
+        je row24
+        MOV AL, 1110b  ;yellow color
+        MOV AH, 0CH
+        INT 10H
+        inc dx
+        dec bx
+        jmp loop014
+
+        row24:
+        mov bx,40
+        loop024:
+        cmp bx,0
+        je coulmn24
+        mov AL, 1110b
+        mov AH, 0CH
+        INT 10H
+        dec cx
+        dec bx
+        jmp loop024
+
+        coulmn24:
+        mov bx,15
+        loop034:
+        cmp bx,0
+        je func_exit1
+        mov AL,1110b
+        mov AH, 0Ch
+        INT 10h
+        dec dx
+        dec bx
+        jmp loop034
+        
+     func_exit2:
+     func_exit1:
+endm
+
+Instructions_Func MACRO
+    mov si, offset Instructions_Str_Heading
+        
+    mov dh, 02     ;row
+    mov dl, 02     ;column
+    .WHILE dl < 15    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+    .ENDW
+
+
+    mov si, offset Instructions_Str_1
+        
+    mov dh, 06     ;row
+    mov dl, 5     ;column
+    .WHILE dl < 33    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+    .ENDW
+
+    mov si, offset Instructions_Str_2
+        
+    mov dh, 07     ;row
+    mov dl, 5     ;column
+    .WHILE dl < 31    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+    .ENDW
+
+    mov si, offset Instructions_Str_Exit
+
+    mov dh, 20     ;row
+    mov dl, 5     ;column
+    .WHILE dl < 32    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+    .ENDW
+
+    loop51:
+    mov ah,0h
+    int 16h
+    putout41:
+    cmp al,8
+    je PRESSED_BACKSPACE
+    jmp loop51
+
+    PRESSED_BACKSPACE:
+
+endm
+
+
+beep proc
+        push ax
+        push bx
+        push cx
+        push dx
+        mov     al, 182         ; Prepare the speaker for the
+        out     43h, al         ;  note.
+        mov     ax, 4560        ; Frequency number (in decimal)
+                                ;  for middle C.
+        out     42h, al         ; Output low byte.
+        mov     al, ah          ; Output high byte.
+        out     42h, al 
+        in      al, 61h         ; Turn on note (get value from
+                                ;  port 61h).
+        or      al, 00000011b   ; Set bits 1 and 0.
+        out     61h, al         ; Send new value.
+        mov     bx, 2          ; Pause for duration of note.
+    pause1:
+        mov     cx, 65535
+    pause2:
+        dec     cx
+        jne     pause2
+        dec     bx
+        jne     pause1
+        in      al, 61h         ; Turn off note (get value from
+                                ;  port 61h).
+        and     al, 11111100b   ; Reset bits 1 and 0.
+        out     61h, al         ; Send new value.
+
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+
+    ret
+beep endp
+
+
 
     MakeScreen MACRO ;for refreshong screen to blank
         mov ah, 00h
@@ -159,6 +1104,30 @@ Brick ENDS
             sub ax,ball_obj.ball_y
             cmp ax,ball_obj.ball_size 
             jng draw 
+    ENDM
+        DrawBall01 MACRO ball_obj
+        mov cx, ball_obj.ball_x
+        mov dx, ball_obj.ball_y 
+        
+        draw1:
+            ;draw pixel
+            mov ah,0ch
+            mov al,1000b
+            int 10h 
+
+            ;loop
+            inc cx 
+            mov ax, cx
+            sub ax,ball_obj.ball_x
+            cmp ax,ball_obj.ball_size 
+            jng draw1
+
+            inc dx 
+            mov cx, ball_obj.ball_x
+            mov ax, dx
+            sub ax,ball_obj.ball_y
+            cmp ax,ball_obj.ball_size 
+            jng draw1
     ENDM
     
     DrawBallBlack MACRO ball_obj
@@ -308,6 +1277,32 @@ Brick ENDS
             cmp ax,paddle_obj.paddle_h 
             jng draw_1
     ENDM
+
+     DrawPaddle01 MACRO paddle_obj
+        mov cx, paddle_obj.paddle_x
+        mov dx, paddle_obj.paddle_y 
+        
+        draw_01:
+            ;draw pixel
+            mov ah,0ch
+            mov al,0100b
+            int 10h 
+
+            ;loop
+            inc cx 
+            mov ax, cx
+            sub ax,paddle_obj.paddle_x
+            cmp ax,paddle_obj.paddle_w 
+            jng draw_01
+
+            inc dx 
+            mov cx, paddle_obj.paddle_x
+            mov ax, dx
+            sub ax,paddle_obj.paddle_y
+            cmp ax,paddle_obj.paddle_h 
+            jng draw_01
+    ENDM
+    
    
     DrawPaddleBlack MACRO paddle_obj
         mov cx, paddle_obj.paddle_x
@@ -464,12 +1459,24 @@ Brick ENDS
         mov ah,00h
         int 16h
         
+        cmp al,112
+        jne NOT_INFINITE_LOOP
+        loop001:
+        DrawPaddle01 paddle_1
+        DrawBall01 ball_1
+        mov ah,0h
+        int 16h
+        cmp al,112
+        je check_time
+        jmp loop001
+        NOT_INFINITE_LOOP:
+
         cmp ah, 4Bh
         je left 
         
         cmp ah, 4Dh
         je right
-        
+
          
         jmp exit
        
@@ -621,6 +1628,58 @@ Brick ENDS
             mov ah,0
             mov level_2,ah 
         .ENDIF
+         mov ax,score_count
+    .IF score_count >=15
+            mov ah,0
+            mov level_3,ah
+            mov ah,0
+            mov level_2,ah
+            MakeScreen
+        mov si, offset YouWin_Str
+        
+        mov dh, 12     ;row
+        mov dl, 15    ;column
+        .WHILE dl < 23    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+
+                mov si, offset YouWin2_Str
+        
+        mov dh, 13     ;row
+        mov dl, 7     ;column
+        .WHILE dl < 30    ; starting poistion + size of string
+        mov ah, 2
+        int 10h
+
+        mov al,[si]    ;ASCII code of Character 
+        mov bx,0
+        mov bl,0010b   ;Green color
+        mov cx,1       ;repetition count
+        mov ah,09h
+        int 10h
+        inc si 
+        inc dl
+        .ENDW
+    .WHILE ah < 30
+    mov ah,0h
+    int 16h
+    cmp al,32
+    je stopGame
+    .ENDW
+
+
+
+    .ENDIF
     ENDM
 
 
@@ -767,7 +1826,7 @@ Brick ENDS
         .ENDIF    
     ENDM    
 
-    StatusBar MACRO 
+ StatusBar MACRO 
         mov cx, 2
         mov dx, 20
         
@@ -860,14 +1919,74 @@ Brick ENDS
         .ENDW
         
     ENDM
-
 start:
+entry:
 
-    main proc 
         mov ax,@data
         mov ds,ax
         
-        MakeScreen
+        ;video mode (graphic) 
+        mov ah, 0
+        mov al, 13h    ;320x200
+        int 10h
+        Welcome_Str_Output 
+
+
+loop1:
+mov ah,0h
+int 16h
+putout:
+cmp al,32
+je PRESSED_SPACE
+jmp loop1
+
+
+
+PRESSED_SPACE:
+MakeScreen
+Enter_Str_Output
+InputName
+MakeScreen
+OutputName
+MakeScreen
+
+loop41:
+MakeScreen
+Menu
+mov ah,0h
+int 16h
+putout1:
+call beep
+cmp ah,048h
+je PRESSED_UP
+cmp ah,050h
+je PRESSED_DOWN
+cmp al,32
+je PRESSED_SPACE_2
+jmp loop41
+PRESSED_UP:
+mov al,0
+dec Menu_Cursor
+cmp Menu_Cursor,al
+jne NOT_BOTTOM
+add Menu_Cursor,4
+NOT_BOTTOM:
+jmp loop41
+PRESSED_DOWN:
+mov al,5
+inc Menu_Cursor
+cmp Menu_Cursor,al
+jne NOT_TOP
+sub Menu_Cursor,4
+NOT_TOP:
+jmp loop41
+
+PRESSED_SPACE_2:
+mov al,1
+cmp Menu_Cursor,al
+jne SECOND_OPTION
+;NEW GAME AAAAAAAAAAAAAAAAAAAAA
+ MakeScreen
         check_time: ;infinite loop to keep the game going
     
             mov ah,2ch ;get time of laptop
@@ -896,15 +2015,24 @@ start:
             mov ah,00h
             int 16h
             
-            cmp al, 65h ;if e is pressed exit the game
-            je stopGame
+           
             
             
             jmp check_time
-    
-    stopGame:
-        mov ah,4ch
-        int 21h
-    main endp
+;NEW GAME AAAAAAAAAAAAAAAAAAAAA
+SECOND_OPTION:
+mov al,2
+cmp Menu_Cursor,al
+jne THIRD_OPTION
+MakeScreen
+Instructions_Func
+jmp loop41
+;INSTRUCTIONS AAAAAAAAAAAAAAAAA
+THIRD_OPTION:
 
-end start    
+stopGame:
+mov ah,4ch
+int 21h
+end start
+
+           
